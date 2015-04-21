@@ -26,5 +26,9 @@ namespace modelFirst
         }
     
         public DbSet<Person> People { get; set; }
+        public DbSet<Business> Businesses { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
+        public DbSet<OrderedCoupon> OrderedCoupons { get; set; }
+        public DbSet<Location> Locations { get; set; }
     }
 }

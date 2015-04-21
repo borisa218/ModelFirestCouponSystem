@@ -5,7 +5,39 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="36892983da5047338e473482de62f9cb" Name="Diagram1" >
-        <EntityTypeShape EntityType="DatabaseModel.Person" Width="1.5" PointX="1.375" PointY="0.5" />
+        <EntityTypeShape EntityType="DatabaseModel.Person" Width="1.5" PointX="1.375" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DatabaseModel.Admin" Width="1.5" PointX="0.5" PointY="3.625" />
+        <InheritanceConnector EntityType="DatabaseModel.Admin" />
+        <EntityTypeShape EntityType="DatabaseModel.BusinessOwner" Width="1.5" PointX="2.375" PointY="3.625" />
+        <InheritanceConnector EntityType="DatabaseModel.BusinessOwner" />
+        <EntityTypeShape EntityType="DatabaseModel.Customer" Width="1.5" PointX="3.875" PointY="1" />
+        <InheritanceConnector EntityType="DatabaseModel.Customer" />
+        <EntityTypeShape EntityType="DatabaseModel.Business" Width="1.5" PointX="6" PointY="3.875" />
+        <AssociationConnector Association="DatabaseModel.AdminBusiness" />
+        <AssociationConnector Association="DatabaseModel.BusinessOwnerBusiness" />
+        <EntityTypeShape EntityType="DatabaseModel.Coupon" Width="1.5" PointX="8.5" PointY="0.75" />
+        <AssociationConnector Association="DatabaseModel.CouponBusiness" />
+        <AssociationConnector Association="DatabaseModel.CouponCustomer" />
+        <EntityTypeShape EntityType="DatabaseModel.OrderedCoupon" Width="1.625" PointX="6.125" PointY="0.5" />
+        <AssociationConnector Association="DatabaseModel.CouponOrderedCoupon" />
+        <AssociationConnector Association="DatabaseModel.OrderedCouponCustomer" />
+        <EntityTypeShape EntityType="DatabaseModel.SocialNetworkCoupon" Width="1.625" PointX="10.125" PointY="4" />
+        <InheritanceConnector EntityType="DatabaseModel.SocialNetworkCoupon" />
+        <EntityTypeShape EntityType="DatabaseModel.Location" Width="1.5" PointX="12.25" PointY="1" />
+        <AssociationConnector Association="DatabaseModel.CouponLocation" />
+        <AssociationConnector Association="DatabaseModel.LocationCustomer" ManuallyRouted="true" >
+          <ConnectorPoint PointX="12.970791965800476" PointY="1" />
+          <ConnectorPoint PointX="12.970791965800476" PointY="0.4375" />
+          <ConnectorPoint PointX="5.138020833333333" PointY="0.4375" />
+          <ConnectorPoint PointX="5.138020833333333" PointY="1" />
+        </AssociationConnector>
+        <AssociationConnector Association="DatabaseModel.SocialNetworkCouponCustomer" ManuallyRouted="true" >
+          <ConnectorPoint PointX="11.75" PointY="4.6446055652006173" />
+          <ConnectorPoint PointX="14.049479166666668" PointY="4.6446055652006173" />
+          <ConnectorPoint PointX="14.049479166666668" PointY="0.13541666666666663" />
+          <ConnectorPoint PointX="4.3520962597508257" PointY="0.13541666666666663" />
+          <ConnectorPoint PointX="4.3520962597508257" PointY="1" />
+        </AssociationConnector>
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

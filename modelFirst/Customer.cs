@@ -12,14 +12,19 @@ namespace modelFirst
     using System;
     using System.Collections.Generic;
     
-    public abstract partial class Person
+    public partial class Customer : Person
     {
-        public int Id { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string Age { get; set; }
-        public Sex Sex { get; set; }
+        public Customer()
+        {
+            this.Coupons = new HashSet<Coupon>();
+            this.OrderedCoupons = new HashSet<OrderedCoupon>();
+        }
+    
+        public double Location_x { get; set; }
+        public double Location_y { get; set; }
+    
+        public virtual ICollection<Coupon> Coupons { get; set; }
+        public virtual ICollection<OrderedCoupon> OrderedCoupons { get; set; }
+        public virtual Location Location { get; set; }
     }
 }

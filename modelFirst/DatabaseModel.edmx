@@ -14,17 +14,206 @@
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="DatabaseModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
         <EntityContainer Name="DatabaseModelContext" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="People" EntityType="DatabaseModel.Person" />
+          <EntitySet Name="Businesses" EntityType="DatabaseModel.Business" />
+          <AssociationSet Name="AdminBusiness" Association="DatabaseModel.AdminBusiness">
+            <End Role="Admin" EntitySet="People" />
+            <End Role="Business" EntitySet="Businesses" />
+          </AssociationSet>
+          <AssociationSet Name="BusinessOwnerBusiness" Association="DatabaseModel.BusinessOwnerBusiness">
+            <End Role="BusinessOwner" EntitySet="People" />
+            <End Role="Business" EntitySet="Businesses" />
+          </AssociationSet>
+          <EntitySet Name="Coupons" EntityType="DatabaseModel.Coupon" />
+          <AssociationSet Name="CouponBusiness" Association="DatabaseModel.CouponBusiness">
+            <End Role="Coupon" EntitySet="Coupons" />
+            <End Role="Business" EntitySet="Businesses" />
+          </AssociationSet>
+          <AssociationSet Name="CouponCustomer" Association="DatabaseModel.CouponCustomer">
+            <End Role="Coupon" EntitySet="Coupons" />
+            <End Role="Customer" EntitySet="People" />
+          </AssociationSet>
+          <EntitySet Name="OrderedCoupons" EntityType="DatabaseModel.OrderedCoupon" />
+          <AssociationSet Name="CouponOrderedCoupon" Association="DatabaseModel.CouponOrderedCoupon">
+            <End Role="Coupon" EntitySet="Coupons" />
+            <End Role="OrderedCoupon" EntitySet="OrderedCoupons" />
+          </AssociationSet>
+          <AssociationSet Name="OrderedCouponCustomer" Association="DatabaseModel.OrderedCouponCustomer">
+            <End Role="OrderedCoupon" EntitySet="OrderedCoupons" />
+            <End Role="Customer" EntitySet="People" />
+          </AssociationSet>
+          <EntitySet Name="Locations" EntityType="DatabaseModel.Location" />
+          <AssociationSet Name="CouponLocation" Association="DatabaseModel.CouponLocation">
+            <End Role="Coupon" EntitySet="Coupons" />
+            <End Role="Location" EntitySet="Locations" />
+          </AssociationSet>
+          <AssociationSet Name="LocationCustomer" Association="DatabaseModel.LocationCustomer">
+            <End Role="Location" EntitySet="Locations" />
+            <End Role="Customer" EntitySet="People" />
+          </AssociationSet>
+          <AssociationSet Name="SocialNetworkCouponCustomer" Association="DatabaseModel.SocialNetworkCouponCustomer">
+            <End Role="SocialNetworkCoupon" EntitySet="Coupons" />
+            <End Role="Customer" EntitySet="People" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Person" Abstract="true">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="UserName" Nullable="false" />
+          <Property Type="String" Name="UserName" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="Password" Nullable="false" MaxLength="10" />
           <Property Type="String" Name="Email" Nullable="false" />
-          <Property Type="String" Name="Password" Nullable="false" />
-          <Property Type="String" Name="Phone" Nullable="false" />
+          <Property Type="String" Name="Phone" Nullable="true" />
+          <Property Type="String" Name="Age" Nullable="false" />
+          <Property Type="DatabaseModel.Sex" Name="Sex" Nullable="false" />
         </EntityType>
+        <EnumType Name="Sex">
+          <Member Name="Female" />
+          <Member Name="Male" />
+        </EnumType>
+        <EntityType Name="Admin" BaseType="DatabaseModel.Person" >
+          <NavigationProperty Name="Businesses" Relationship="DatabaseModel.AdminBusiness" FromRole="Admin" ToRole="Business" />
+        </EntityType>
+        <EntityType Name="BusinessOwner" BaseType="DatabaseModel.Person" >
+          <NavigationProperty Name="Businesses" Relationship="DatabaseModel.BusinessOwnerBusiness" FromRole="BusinessOwner" ToRole="Business" />
+        </EntityType>
+        <EntityType Name="Customer" BaseType="DatabaseModel.Person" >
+          <NavigationProperty Name="Coupons" Relationship="DatabaseModel.CouponCustomer" FromRole="Customer" ToRole="Coupon" />
+          <NavigationProperty Name="OrderedCoupons" Relationship="DatabaseModel.OrderedCouponCustomer" FromRole="Customer" ToRole="OrderedCoupon" />
+          <NavigationProperty Name="Location" Relationship="DatabaseModel.LocationCustomer" FromRole="Customer" ToRole="Location" />
+          <Property Type="Double" Name="Location_x" Nullable="false" />
+          <Property Type="Double" Name="Location_y" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Business">
+          <Key>
+            <PropertyRef Name="BusinessID" />
+          </Key>
+          <Property Type="Int32" Name="BusinessID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="Address" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="200" />
+          <Property Type="String" Name="Phone" Nullable="false" />
+          <Property Type="DatabaseModel.Category" Name="Category" Nullable="false" />
+          <NavigationProperty Name="Admin" Relationship="DatabaseModel.AdminBusiness" FromRole="Business" ToRole="Admin" />
+          <Property Type="Int32" Name="AdminId" Nullable="false" />
+          <NavigationProperty Name="BusinessOwner" Relationship="DatabaseModel.BusinessOwnerBusiness" FromRole="Business" ToRole="BusinessOwner" />
+          <Property Type="Int32" Name="BusinessOwnerId" Nullable="false" />
+          <NavigationProperty Name="Coupons" Relationship="DatabaseModel.CouponBusiness" FromRole="Business" ToRole="Coupon" />
+        </EntityType>
+        <EnumType Name="Category">
+          <Member Name="Sports" />
+          <Member Name="Food" />
+          <Member Name="Shopping" />
+          <Member Name="HealthAndBeauty" />
+        </EnumType>
+        <Association Name="AdminBusiness">
+          <End Type="DatabaseModel.Admin" Role="Admin" Multiplicity="1" />
+          <End Type="DatabaseModel.Business" Role="Business" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Admin">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Business">
+              <PropertyRef Name="AdminId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="BusinessOwnerBusiness">
+          <End Type="DatabaseModel.BusinessOwner" Role="BusinessOwner" Multiplicity="1" />
+          <End Type="DatabaseModel.Business" Role="Business" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BusinessOwner">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Business">
+              <PropertyRef Name="BusinessOwnerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Coupon">
+          <Key>
+            <PropertyRef Name="CouponID" />
+          </Key>
+          <Property Type="Int32" Name="CouponID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="20" />
+          <Property Type="Int32" Name="OriginalPrice" Nullable="false" />
+          <Property Type="Int32" Name="DiscountPrice" Nullable="false" />
+          <NavigationProperty Name="FromBusiness" Relationship="DatabaseModel.CouponBusiness" FromRole="Coupon" ToRole="Business" />
+          <NavigationProperty Name="BuyingCustomers" Relationship="DatabaseModel.CouponCustomer" FromRole="Coupon" ToRole="Customer" />
+          <Property Type="DateTime" Name="ExpirationDate" Nullable="false" />
+          <NavigationProperty Name="Location" Relationship="DatabaseModel.CouponLocation" FromRole="Coupon" ToRole="Location" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="200" />
+        </EntityType>
+        <Association Name="CouponBusiness">
+          <End Type="DatabaseModel.Coupon" Role="Coupon" Multiplicity="*" />
+          <End Type="DatabaseModel.Business" Role="Business" Multiplicity="1" />
+        </Association>
+        <Association Name="CouponCustomer">
+          <End Type="DatabaseModel.Coupon" Role="Coupon" Multiplicity="*" />
+          <End Type="DatabaseModel.Customer" Role="Customer" Multiplicity="*" />
+        </Association>
+        <EntityType Name="OrderedCoupon">
+          <Key>
+            <PropertyRef Name="OrderedCouponID" />
+          </Key>
+          <Property Type="Int32" Name="OrderedCouponID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Boolean" Name="Used" Nullable="false" />
+          <Property Type="Int32" Name="Rank" Nullable="false" />
+          <NavigationProperty Name="Coupon" Relationship="DatabaseModel.CouponOrderedCoupon" FromRole="OrderedCoupon" ToRole="Coupon" />
+          <Property Type="Int32" Name="CouponCouponID" Nullable="false" />
+          <NavigationProperty Name="Customer" Relationship="DatabaseModel.OrderedCouponCustomer" FromRole="OrderedCoupon" ToRole="Customer" />
+        </EntityType>
+        <Association Name="CouponOrderedCoupon">
+          <End Type="DatabaseModel.Coupon" Role="Coupon" Multiplicity="1" />
+          <End Type="DatabaseModel.OrderedCoupon" Role="OrderedCoupon" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Coupon">
+              <PropertyRef Name="CouponID" />
+            </Principal>
+            <Dependent Role="OrderedCoupon">
+              <PropertyRef Name="CouponCouponID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="OrderedCouponCustomer">
+          <End Type="DatabaseModel.OrderedCoupon" Role="OrderedCoupon" Multiplicity="*" />
+          <End Type="DatabaseModel.Customer" Role="Customer" Multiplicity="1" />
+        </Association>
+        <EntityType Name="SocialNetworkCoupon" BaseType="DatabaseModel.Coupon" >
+          <Property Type="String" Name="SocialWebSite" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Location">
+          <Key>
+            <PropertyRef Name="x" />
+            <PropertyRef Name="y" />
+          </Key>
+          <Property Type="Double" Name="x" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Double" Name="y" Nullable="false" />
+          <NavigationProperty Name="Coupons" Relationship="DatabaseModel.CouponLocation" FromRole="Location" ToRole="Coupon" />
+          <NavigationProperty Name="Customers" Relationship="DatabaseModel.LocationCustomer" FromRole="Location" ToRole="Customer" />
+        </EntityType>
+        <Association Name="CouponLocation">
+          <End Type="DatabaseModel.Coupon" Role="Coupon" Multiplicity="*" />
+          <End Type="DatabaseModel.Location" Role="Location" Multiplicity="1" />
+        </Association>
+        <Association Name="LocationCustomer">
+          <End Type="DatabaseModel.Location" Role="Location" Multiplicity="1" />
+          <End Type="DatabaseModel.Customer" Role="Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Location">
+              <PropertyRef Name="x" />
+              <PropertyRef Name="y" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="Location_x" />
+              <PropertyRef Name="Location_y" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SocialNetworkCouponCustomer">
+          <End Type="DatabaseModel.SocialNetworkCoupon" Role="SocialNetworkCoupon" Multiplicity="*" />
+          <End Type="DatabaseModel.Customer" Role="Customer" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->

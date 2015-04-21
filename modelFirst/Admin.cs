@@ -12,14 +12,14 @@ namespace modelFirst
     using System;
     using System.Collections.Generic;
     
-    public abstract partial class Person
+    public partial class Admin : Person
     {
-        public int Id { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string Age { get; set; }
-        public Sex Sex { get; set; }
+        public Admin()
+        {
+            this.Businesses = new HashSet<Business>();
+        }
+    
+    
+        public virtual ICollection<Business> Businesses { get; set; }
     }
 }
